@@ -5,7 +5,7 @@ from keras.layers import LSTM, GRU
 from keras.layers.recurrent import Recurrent
 
 
-class PointerLSTM(GRU):
+class PointerLSTM(LSTM):
     def __init__(self, hidden_shape, *args, **kwargs):
         self.hidden_shape = hidden_shape
         self.input_length = []
@@ -63,7 +63,7 @@ class PointerLSTM(GRU):
 
         input_shape = self.input_spec[0].shape
         en_seq = states[-1]
-        _, [h] = self.cell.call(x_input, states[:-1])
+        _, [h, c] = self.cell.call(x_input, states[:-1])
 
         # vt*tanh(W1*e+W2*d)
         dec_seq = K.repeat(h, input_shape[1])
@@ -74,7 +74,7 @@ class PointerLSTM(GRU):
 
         # make probability tensor
         pointer = softmax(U)
-        return pointer, [h]
+        return pointer, [h, c]
 
     def get_output_shape_for(self, input_shape):
         # output shape is not affected by the attention component
