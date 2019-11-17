@@ -42,17 +42,10 @@ YY = np.asarray(YY)
 
 tokenizer_file_extra = ''
 if(useWordLevelEmbeddings):
-    embeddings_index = {}
-    with open('.\\data\\pretrained\\glove.6B\\glove.6B.300d.txt', encoding="utf8") as f:
-        for line in f.readlines():
-            word, coefs = line.split(maxsplit=1)
-            coefs = np.fromstring(coefs, 'f', sep=' ')
-            embeddings_index[word] = coefs
 
     tokenizer = Tokenizer(num_words=max_num_word)
     tokenizer.fit_on_texts(sentences)
     
-
     X = []
     for line in sentences:
         lineSents = line.split('\t')
@@ -71,6 +64,13 @@ if(useWordLevelEmbeddings):
     num_words = min(max_num_word, len(word_index) + 1)
 
     if(usePretrainedWordEmbeddings):
+        embeddings_index = {}
+        with open('.\\Pretrained\\glove.6B\\glove.6B.300d.txt', encoding="utf8") as f:
+            for line in f.readlines():
+                word, coefs = line.split(maxsplit=1)
+                coefs = np.fromstring(coefs, 'f', sep=' ')
+                embeddings_index[word] = coefs
+
         embedding_matrix = np.zeros((num_words, EMBEDDING_DIM))
         for word, i in word_index.items():
             if i >= max_num_word:
@@ -107,7 +107,7 @@ y_test = YY[split_at:]
 
 validation_data = (x_test, y_test)
 
-with open('.\\data\\Tokenizer\\tokenizer' + tokenizer_file_extra + '.pickle', 'wb') as handle:
+with open('.\\Tokenizer\\tokenizer' + tokenizer_file_extra + '.pickle', 'wb') as handle:
     pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 if(usePointerBasedLSTM):
