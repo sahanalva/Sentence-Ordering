@@ -63,7 +63,7 @@ class PointerLSTM(LSTM):
 
         input_shape = self.input_spec[0].shape
         en_seq = states[-1]
-        _, [h, c] = super(PointerLSTM, self).cell.call(x_input, states[:-1])
+        _, [h, c] = self.cell.call(x_input, states[:-1])
 
         # vt*tanh(W1*e+W2*d)
         dec_seq = K.repeat(h, input_shape[1])

@@ -13,6 +13,9 @@ def UniversalEmbedding(x):
     return embed(tf.squeeze(tf.cast(x, tf.string)), 
     	signature="default", as_dict=True)["default"]
 
+'''
+Work in progress
+'''
 def PointerLstmBased(max_num_sent):
     sent_seq = Input(shape=(max_num_sent, 1), name='sent_inp', dtype=tf.string)
     sent_emb = TimeDistributed(Lambda(UniversalEmbedding, output_shape=(512,)))(sent_seq)

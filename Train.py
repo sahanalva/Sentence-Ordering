@@ -8,8 +8,8 @@ from keras.models import Model
 from keras.initializers import Constant
 import pickle
 
-data_folder = '' # Fill out location of sentences and permutations file created by data preparation notebooks
-modelFileName = '' # Fill out name of trained model file
+data_folder = './data/processed/' # Fill out location of sentences and permutations file created by data preparation notebooks
+modelFileName = 'model.h5' # Fill out name of trained model file
 split_at = 1800
 batch_size = 10
 max_seq_len = 10
@@ -17,8 +17,8 @@ max_sent_len = 40
 max_num_word = 2000
 EMBEDDING_DIM = 300
 usePointerBasedLSTM = False # Work in progress
-useWordLevelEmbeddings = True
-usePretrainedWordEmbeddings = True
+useWordLevelEmbeddings = False # Use Universal Sentence Embeddings if False
+usePretrainedWordEmbeddings = False # Use Glove Embeddings if True and train from one hot vectors if False
 
 y = np.loadtxt(data_folder + 'permutations.txt', delimiter='\t', dtype=int)
 
