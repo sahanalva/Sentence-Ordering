@@ -5,8 +5,9 @@ from keras.preprocessing.sequence import pad_sequences
 from keras.layers import Embedding
 from keras.models import Model
 from keras.initializers import Constant
+import pickle
 
-data_folder = '' # Fill out locations of sentences and permutations file created by data preparation notebooks
+data_folder = '.\\data\\processed\\' # Fill out locations of sentences and permutations file created by data preparation notebooks
 split_at = 185000
 batch_size = 100
 max_seq_len = 10
@@ -39,6 +40,7 @@ for y_ in y:
 
 YY = np.asarray(YY)
 
+tokenizer_file_extra = ''
 if(useWordLevelEmbeddings):
     embeddings_index = {}
     with open('.\\data\\pretrained\\glove.6B\\glove.6B.300d.txt', encoding="utf8") as f:
@@ -49,6 +51,7 @@ if(useWordLevelEmbeddings):
 
     tokenizer = Tokenizer(num_words=max_num_word)
     tokenizer.fit_on_texts(sentences)
+    
 
     X = []
     for line in sentences:
@@ -77,6 +80,7 @@ if(useWordLevelEmbeddings):
                 embedding_matrix[i] = embedding_vector
         
         embedding_layer = Embedding(num_words, EMBEDDING_DIM, input_length=max_sent_len, embeddings_initializer=Constant(embedding_matrix), trainable=False)
+        tokenizer_file_extra = '_pretrained'
 
     else:
         embedding_layer = Embedding(num_words, EMBEDDING_DIM, input_length=max_sent_len, trainable=True)
@@ -102,6 +106,9 @@ y_train = YY[:split_at]
 y_test = YY[split_at:]
 
 validation_data = (x_test, y_test)
+
+with open('.\\data\\Tokenizer\\tokenizer' + tokenizer_file_extra + '.pickle', 'wb') as handle:
+    pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 if(usePointerBasedLSTM):
     model = PointerLstmBased(max_seq_len)
