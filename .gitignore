@@ -4,3 +4,5 @@ data
 Models
 .vscode
 arxiv_data
+Pretrained
+Tokenizer
