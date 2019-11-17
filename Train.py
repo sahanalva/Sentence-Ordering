@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from OrderingModels import *
 from keras.preprocessing.text import Tokenizer
@@ -7,9 +8,10 @@ from keras.models import Model
 from keras.initializers import Constant
 import pickle
 
-data_folder = '.\\data\\processed\\' # Fill out locations of sentences and permutations file created by data preparation notebooks
-split_at = 185000
-batch_size = 100
+data_folder = '' # Fill out location of sentences and permutations file created by data preparation notebooks
+modelFileName = '' # Fill out name of trained model file
+split_at = 1800
+batch_size = 10
 max_seq_len = 10
 max_sent_len = 40
 max_num_word = 2000
@@ -65,7 +67,7 @@ if(useWordLevelEmbeddings):
 
     if(usePretrainedWordEmbeddings):
         embeddings_index = {}
-        with open('.\\Pretrained\\glove.6B\\glove.6B.300d.txt', encoding="utf8") as f:
+        with open('./Pretrained/glove.6B/glove.6B.300d.txt', encoding="utf8") as f:
             for line in f.readlines():
                 word, coefs = line.split(maxsplit=1)
                 coefs = np.fromstring(coefs, 'f', sep=' ')
@@ -107,8 +109,10 @@ y_test = YY[split_at:]
 
 validation_data = (x_test, y_test)
 
-with open('.\\Tokenizer\\tokenizer' + tokenizer_file_extra + '.pickle', 'wb') as handle:
-    pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+if(useWordLevelEmbeddings):
+    os.makedirs("./Tokenizer/", exist_ok=True)
+    with open('./Tokenizer/tokenizer' + tokenizer_file_extra + '.pickle', 'wb') as handle:
+        pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 if(usePointerBasedLSTM):
     model = PointerLstmBased(max_seq_len)
@@ -117,6 +121,8 @@ elif(useWordLevelEmbeddings):
 else:
     model = BiLstmBased(max_seq_len)
 
+    
+os.makedirs("./Models/", exist_ok=True)
 with tf.Session() as session:
   K.set_session(session)
   session.run(tf.global_variables_initializer())
@@ -124,4 +130,4 @@ with tf.Session() as session:
   history = model.fit(x_train, y_train, epochs=20, batch_size=batch_size,
                     validation_data=validation_data, shuffle=True)
 
-  model.save_weights('.\\Models\\model.h5')
+  model.save_weights('./Models/' + modelFileName )
