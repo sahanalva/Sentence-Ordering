@@ -10,3 +10,6 @@
 * Run Train.py file using : python Train.py
   * Contains a number of flags that can be set differently to run different experiments(eg : useWordEmbeddings, usePretrainedWordEmbeddings, split_at etc.)
   * Required : Fill out location of processed data files and name(.h5 file) of final trained model.
+
+## TODO
+* PointerLSTM code is still a work in progress and doesn't currently work as expected.
